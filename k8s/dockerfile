@@ -1,0 +1,17 @@
+From node:18-alpine AS base
+WORKDIR /app
+
+
+# install deps seperately for caching
+COPY package.json package-lock.json* ./
+RUN npm ci --omit=dev
+
+# Copy app source
+COPY . .
+
+# Rn as non-root user (alpine node image includes user 'node.')
+
+USER node
+EXPOSE 3000
+ENV NODE_ENV=production
+CMD ["npm", "start"]
